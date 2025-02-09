@@ -77,19 +77,19 @@ function set_team(cell, team) {
 function play(event) {
     console.log("Start!");
     clearTimeout(play_timer);
-    play_timer = setTimeout(step, PLAY_TIMEOUT);
+    play_timer = setTimeout(() => { step(event, true); }, PLAY_TIMEOUT);
 }
 
 
-function step() {
+function step(event, autoplay = false) {
     console.log("Step!");
     let new_values = [];
     for (let row=0; row < grid.length; row++) {
         new_values.push([]);
         for (let col=0; col < grid[0].length; col++) {
             let color = get_color(row, col);
-            let neighbor_count = get_neighbor_count(row, col);
-            new_values[row][col] = get_new_color(color, neighbor_count);
+            let neighbor_counts = get_neighbor_count(row, col);
+            new_values[row][col] = get_new_color(color, neighbor_counts);
         }
     }
     for (let row=0; row < grid.length; row++) {
@@ -97,17 +97,17 @@ function step() {
             set_team(grid[row][col], new_values[row][col]);
         }
     }
-    play_timer = setTimeout(step, PLAY_TIMEOUT);
+    if (autoplay)
+        play_timer = setTimeout((event) => { step(event, true); }, PLAY_TIMEOUT);
 }
 
 function get_neighbor_count(row, col) {
-    let neighbors = get_neighbor_colors(row, col);
-    let count = 0;
-    neighbors.forEach((neighbor) => {
-        if (neighbor !== "white")
-            count += 1;
+    let neighbors_colors = get_neighbor_colors(row, col);
+    let neighbor_counts = {"white": 0, "red": 0, "blue": 0};
+    neighbors_colors.forEach((color) => {
+        neighbor_counts[color]++;
     })
-    return count;
+    return neighbor_counts;
 }
 
 function get_neighbor_colors(row, col) {
@@ -142,12 +142,13 @@ function wrap_value(val, max_val) {
     return val;
 }
 
-function get_new_color(color, neighbor_count) {
+function get_new_color(color, neighbor_counts) {
+    let non_whites = neighbor_counts["red"] + neighbor_counts["blue"];
     if (color === "white") {
-        if (neighbor_count === 3)
+        if (non_whites === 3)
             return "red"
     } else {
-        if (neighbor_count < 2 || neighbor_count > 3)
+        if (non_whites < 2 || non_whites > 3)
             return "white";
     }
     return color;

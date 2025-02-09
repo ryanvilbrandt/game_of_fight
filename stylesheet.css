@@ -30,6 +30,6 @@
     background-color: blue;
 }
 
-#play_button, #stop_button, #clear_button {
+#play_button, #step_button, #stop_button, #clear_button {
     margin: 1em;
 }
