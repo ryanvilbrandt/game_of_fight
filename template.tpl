@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
-    <title>Title</title>
+    <title>Game of FIGHT!!</title>
 </head>
 <body>
     <div id="container">
