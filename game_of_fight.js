@@ -1,7 +1,7 @@
 let grid;
 let grid_width, grid_height;
 let play_timer;
-const PLAY_TIMEOUT = 500;
+const PLAY_TIMEOUT = 250;
 
 export function init() {
     console.log("Hello game!");
@@ -89,7 +89,8 @@ function step(event, autoplay = false) {
         for (let col=0; col < grid[0].length; col++) {
             let color = get_color(row, col);
             let neighbor_counts = get_neighbor_count(row, col);
-            new_values[row][col] = get_new_color(color, neighbor_counts);
+            let new_color = get_new_color(color, neighbor_counts);
+            new_values[row][col] = new_color;
         }
     }
     for (let row=0; row < grid.length; row++) {
@@ -146,10 +147,15 @@ function get_new_color(color, neighbor_counts) {
     let non_whites = neighbor_counts["red"] + neighbor_counts["blue"];
     if (color === "white") {
         if (non_whites === 3)
-            return "red"
+            return neighbor_counts["red"] > neighbor_counts["blue"] ? "red" : "blue";
     } else {
+        let other_color = color === "red" ? "blue" : "red";
+        // Die of starvation or overcrowding
         if (non_whites < 2 || non_whites > 3)
             return "white";
+        // Convert if more enemies than allies
+        if (neighbor_counts[other_color] > neighbor_counts[color])
+            return other_color;
     }
     return color;
 }
