@@ -21,6 +21,7 @@
             <button id="stop_button">Stop</button>
             <button id="clear_button">Clear</button>
         </div>
+        <input id="slider" type="range" min="0" max="4" step="1" value="2"><label id="slider_value" for="slider">Speed: 250ms</label>
     </div>
 
     <script type="module">

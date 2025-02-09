@@ -1,7 +1,7 @@
 let grid;
 let grid_width, grid_height;
 let play_timer;
-const PLAY_TIMEOUT = 250;
+let PLAY_TIMEOUT = 250;
 
 export function init() {
     console.log("Hello game!");
@@ -15,6 +15,8 @@ export function init() {
     document.querySelector("#step_button").addEventListener("click", step);
     document.querySelector("#stop_button").addEventListener("click", stop);
     document.querySelector("#clear_button").addEventListener("click", clear);
+
+    set_up_speed_slider();
 }
 
 function build_grid() {
@@ -82,15 +84,15 @@ function play(event) {
 
 
 function step(event, autoplay = false) {
-    console.log("Step!");
+    if (!autoplay)
+        console.log("Step!");
     let new_values = [];
     for (let row=0; row < grid.length; row++) {
         new_values.push([]);
         for (let col=0; col < grid[0].length; col++) {
             let color = get_color(row, col);
             let neighbor_counts = get_neighbor_count(row, col);
-            let new_color = get_new_color(color, neighbor_counts);
-            new_values[row][col] = new_color;
+            new_values[row][col] = get_new_color(color, neighbor_counts);
         }
     }
     for (let row=0; row < grid.length; row++) {
@@ -100,6 +102,21 @@ function step(event, autoplay = false) {
     }
     if (autoplay)
         play_timer = setTimeout((event) => { step(event, true); }, PLAY_TIMEOUT);
+}
+
+function set_up_speed_slider() {
+    const slider = document.getElementById("slider");
+    const label = document.getElementById("slider_value");
+
+    // Define the allowed values
+    const values = [50, 100, 250, 500, 1000];
+
+    // Update slider position and output
+    slider.addEventListener("input", function () {
+        let value = values[slider.value];
+        label.textContent = `Speed: ${value}ms`
+        PLAY_TIMEOUT = value;
+    });
 }
 
 function get_neighbor_count(row, col) {
